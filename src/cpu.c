@@ -27,6 +27,7 @@ struct ExecutionContext {
 
 z80cpu_t* cpu_init() {
 	z80cpu_t *cpu = calloc(1, sizeof(z80cpu_t));
+	if(!cpu) return NULL;
 	z80iodevice_t nullDevice = { NULL, NULL, NULL };
 	int i;
 	for (i = 0; i < 0x100; i++) {
