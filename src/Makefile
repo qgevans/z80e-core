@@ -1,12 +1,9 @@
-OBJECTS=cpu.o registers.o
+LIB=	z80e-core
+LIBDIR?=/usr/local/lib
+SRCS=	cpu.c \
+	registers.c
+CFLAGS+=-I${.CURDIR}/../include
+SHLIB_MAJOR=1
 
-../libz80e-core.a: ${OBJECTS}
-	ar -rcs ../libz80e-core.a ${OBJECTS}
+.include <bsd.lib.mk>
 
-clean:
-	-rm ${OBJECTS}
-	-rm ../libz80e-core.a
-
-.SUFFIXES: .o
-.c.o:
-	cc -I ../include -o ${.TARGET} -c ${.IMPSRC}
