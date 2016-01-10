@@ -30,3 +30,8 @@
 
 # Debug files
 *.dSYM/
+
+# BSD make junk
+*.So
+*.po
+*
