@@ -1,8 +1,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "registers.h"
-#include "cpu.h"
+#include "z80e/registers.h"
+#include "z80e/cpu.h"
 
 struct ExecutionContext {
 	uint8_t cycles;

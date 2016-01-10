@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#include <registers.h>
+#include "registers.h"
 
 typedef struct z80cpu z80cpu_t;
 typedef struct z80iodevice z80iodevice_t;
