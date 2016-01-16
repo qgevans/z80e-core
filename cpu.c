@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include "z80e/registers.h"
@@ -890,9 +891,11 @@ void handle_interrupt(struct ExecutionContext *context) {
 }
 
 int cpu_execute(z80cpu_t *cpu, int cycles) {
+	bool indefinite = false;
+	if(!cycles) indefinite = true;
 	struct ExecutionContext context = {0};
 	context.cpu = cpu;
-	while (cycles > 0 || cpu->prefix != 0) {
+	while (indefinite || cycles > 0 || cpu->prefix != 0) {
 		context.cycles = 0;
 		if (cpu->IFF2 && !cpu->prefix) {
 			if (cpu->IFF_wait) {
@@ -1547,9 +1550,11 @@ int cpu_execute(z80cpu_t *cpu, int cycles) {
 		}
 
 exit_loop:
-		cycles -= context.cycles;
-		if (context.cycles == 0) {
-			cycles--;
+		if(!indefinite) {
+			cycles -= context.cycles;
+			if (context.cycles == 0) {
+				cycles--;
+			}
 		}
 	}
 	return cycles;
