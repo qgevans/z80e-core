@@ -1,4 +1,3 @@
-.include <bsd.own.mk>
 LIB=	z80e-core
 PREFIX?=/usr/local
 LIBDIR?=${PREFIX}/lib
