@@ -7,6 +7,13 @@ INCS=	z80e/cpu.h \
 	z80e/registers.h
 INCSDIR?=${PREFIX}/include/z80e
 SHLIB_MAJOR=1
+CSTD=   c11
+# Start configurables
+WITH_THREADS?=YES
+# End configurables
+.if ${WITH_THREADS} == "YES"
+CFLAGS+= -DWITH_THREADS
+.endif
 
 beforeinstall :
 	${INSTALL} -d -o ${BINOWN} -g ${BINGRP} -m ${BINMODE} ${INCSDIR}
