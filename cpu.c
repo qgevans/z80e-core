@@ -903,6 +903,28 @@ void handle_interrupt(struct ExecutionContext *context) {
   }
 }
 
+int cpu_interrupt(z80cpu_t *cpu, uint8_t bus) {
+#ifdef WITH_THREADS
+  int err = pthread_mutex_lock(&cpu->bus_lock);
+  if(err) return err;
+#endif
+  cpu->interrupt = true;
+  cpu->bus = bus;
+#ifdef WITH_THREADS
+  return pthread_mutex_unlock(&cpu->bus_lock);
+#endif
+}
+
+#ifdef WITH_THREADS
+int cpu_try_interrupt(z80cpu_t *cpu, uint8_t bus) {
+  int err = pthread_mutex_lock(&cpu->bus_lock);
+  if(err) return err;
+  cpu->interrupt = true;
+  cpu->bus = bus;
+  return pthread_mutex_unlock(&cpu->bus_lock);
+}
+#endif
+
 int cpu_execute(z80cpu_t *cpu, int cycles) {
   bool indefinite = false;
   if(!cycles) indefinite = true;
