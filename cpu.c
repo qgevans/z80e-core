@@ -889,15 +889,15 @@ void handle_interrupt(struct ExecutionContext *context) {
     context->cycles += 13;
     push(cpu, r->PC);
     r->PC = 0x38;
-    cpu->IFF1 = 0;
-    cpu->IFF2 = 0;
+    cpu->IFF1 = false;
+    cpu->IFF2 = false;
     break;
   case 2:
     context->cycles += 19;
     push(cpu, r->PC);
     r->PC = r->I * 256 + cpu->bus;
-    cpu->IFF1 = 0;
-    cpu->IFF2 = 0;
+    cpu->IFF1 = false;
+    cpu->IFF2 = false;
     break;
   }
 }
@@ -933,14 +933,14 @@ int cpu_execute(z80cpu_t *cpu, int cycles) {
     context.cycles = 0;
     if (cpu->IFF2 && !cpu->prefix) {
       if (cpu->IFF_wait) {
-	cpu->IFF_wait = 0;
+	cpu->IFF_wait = false;
       } else {
 #ifdef WITH_THREADS
 	int err = pthread_mutex_trylock(&cpu->bus_lock);
 	if(!err) {
 #endif
 	  if (cpu->interrupt) {
-	    cpu->halted = 0;
+	    cpu->halted = false;
 	    handle_interrupt(&context);
 	    goto exit_loop;
 	  }
@@ -1188,12 +1188,12 @@ int cpu_execute(z80cpu_t *cpu, int cycles) {
 	  execute_bli(context.y, context.z, &context);
 	} else { // NONI (invalid instruction)
 	  context.cycles += 4;
-	  cpu->IFF_wait = 1;
+	  cpu->IFF_wait = true;
 	}
 	break;
       default: // NONI (invalid instruction)
 	context.cycles += 4;
-	cpu->IFF_wait = 1;
+	cpu->IFF_wait = true;
 	break;
       }
     } else {
@@ -1432,7 +1432,7 @@ int cpu_execute(z80cpu_t *cpu, int cycles) {
       case 1:
 	if (context.z == 6 && context.y == 6) { // HALT
 	  context.cycles += 4;
-	  cpu->halted = 1;
+	  cpu->halted = true;
 	} else { // LD r[y], r[z]
 	  context.cycles += 4;
 	  read_write_r(context.z, context.y, &context);
@@ -1523,14 +1523,14 @@ int cpu_execute(z80cpu_t *cpu, int cycles) {
 	    break;
 	  case 6: // DI
 	    context.cycles += 4;
-	    cpu->IFF1 = 0;
-	    cpu->IFF2 = 0;
+	    cpu->IFF1 = false;
+	    cpu->IFF2 = false;
 	    break;
 	  case 7: // EI
 	    context.cycles += 4;
-	    cpu->IFF1 = 1;
-	    cpu->IFF2 = 1;
-	    cpu->IFF_wait = 1;
+	    cpu->IFF1 = true;
+	    cpu->IFF2 = true;
+	    cpu->IFF_wait = true;
 	    break;
 	  }
 	  break;

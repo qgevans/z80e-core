@@ -21,14 +21,11 @@ struct z80iodevice {
 struct z80cpu {
   z80iodevice_t devices[0x100];
   z80registers_t registers;
-  struct {
-    uint8_t IFF1 : 1;
-    uint8_t IFF2 : 1;
-    uint8_t int_mode : 2;
-    // Internal use:
-    uint8_t IFF_wait : 1;
-    uint8_t halted : 1;
-  };
+  bool IFF1;
+  bool IFF2;
+  uint8_t int_mode;
+  bool IFF_wait;
+  bool halted;
   uint16_t prefix;
   void *memory;
   uint8_t (*read_byte)(void *, uint16_t);
