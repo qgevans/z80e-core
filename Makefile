@@ -7,7 +7,6 @@ INCS=	z80e/cpu.h \
 	z80e/registers.h
 INCSDIR?=${PREFIX}/include/z80e
 SHLIB_MAJOR=1
-CSTD=   c11
 # Start configurables
 WITH_THREADS?=YES
 # End configurables

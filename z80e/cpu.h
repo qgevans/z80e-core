@@ -3,6 +3,9 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#ifdef WITH_THREADS
+#include <pthread.h>
+#endif
 
 #include "registers.h"
 
@@ -30,6 +33,9 @@ struct z80cpu {
   void *memory;
   uint8_t (*read_byte)(void *, uint16_t);
   void (*write_byte)(void *, uint16_t, uint8_t);
+#ifdef WITH_THREADS
+  pthread_mutex_t bus_lock;
+#endif
   bool interrupt;
   uint8_t bus;
 };

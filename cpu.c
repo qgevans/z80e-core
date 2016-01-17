@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <string.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -34,10 +35,22 @@ z80cpu_t* cpu_init() {
   for (i = 0; i < 0x100; i++) {
     cpu->devices[i] = nullDevice;
   }
+#ifdef WITH_THREADS
+  if(pthread_mutex_init(&cpu->bus_lock, NULL)) {
+    free(cpu);
+    return NULL;
+  }
+#endif
   return cpu;
 }
 
 void cpu_free(z80cpu_t *cpu) {
+#ifdef WITH_THREADS
+  int err;
+  do {
+    err = pthread_mutex_destroy(&cpu->bus_lock);
+  } while(err == EBUSY);
+#endif
   free(cpu);
 }
 
@@ -901,16 +914,29 @@ int cpu_execute(z80cpu_t *cpu, int cycles) {
       if (cpu->IFF_wait) {
 	cpu->IFF_wait = 0;
       } else {
-	if (cpu->interrupt) {
-	  cpu->halted = 0;
-	  handle_interrupt(&context);
-	  goto exit_loop;
+#ifdef WITH_THREADS
+	int err = pthread_mutex_trylock(&cpu->bus_lock);
+	if(!err) {
+#endif
+	  if (cpu->interrupt) {
+	    cpu->halted = 0;
+	    handle_interrupt(&context);
+	    goto exit_loop;
+	  }
+#ifdef WITH_THREADS
+	  err = pthread_mutex_unlock(&cpu->bus_lock);
+	  if(err) {
+	    return -1;
+	  }
+	} else if(err != EBUSY) {
+	  return -1;
 	}
+#endif
       }
     }
     if (cpu->halted) {
-      context.cycles += 4;
-      goto exit_loop;
+      if(!indefinite) cycles -= 4;
+      break;
     }
 
     context.opcode = cpu_read_byte(cpu, cpu->registers.PC++);
