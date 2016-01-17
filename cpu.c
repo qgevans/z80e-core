@@ -2,7 +2,6 @@
 #include <string.h>
 #include <stdbool.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include "z80e/registers.h"
 #include "z80e/cpu.h"
 
