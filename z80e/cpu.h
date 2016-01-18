@@ -1,6 +1,7 @@
 #ifndef CPU_H
 #define CPU_H
 
+#include "config.h"
 #include <stdbool.h>
 #include <stdint.h>
 #ifdef WITH_THREADS
