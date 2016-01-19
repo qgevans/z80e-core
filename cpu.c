@@ -915,12 +915,32 @@ int cpu_interrupt(z80cpu_t *cpu, uint8_t bus) {
 #endif
 }
 
+int cpu_clear_interrupt(z80cpu_t *cpu) {
+#ifdef WITH_THREADS
+  int err = pthread_mutex_lock(&cpu->bus_lock);
+  if(err) return err;
+#endif
+  cpu->interrupt = false;
+  cpu->bus = 0;
+#ifdef WITH_THREADS
+  return pthread_mutex_unlock(&cpu->bus_lock);
+#endif
+}
+
 #ifdef WITH_THREADS
 int cpu_try_interrupt(z80cpu_t *cpu, uint8_t bus) {
   int err = pthread_mutex_lock(&cpu->bus_lock);
   if(err) return err;
   cpu->interrupt = true;
   cpu->bus = bus;
+  return pthread_mutex_unlock(&cpu->bus_lock);
+}
+
+int cpu_try_clear_interrupt(z80cpu_t *cpu) {
+  int err = pthread_mutex_lock(&cpu->bus_lock);
+  if(err) return err;
+  cpu->interrupt = false;
+  cpu->bus = 0;
   return pthread_mutex_unlock(&cpu->bus_lock);
 }
 #endif
