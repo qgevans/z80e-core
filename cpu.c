@@ -946,7 +946,7 @@ int cpu_try_clear_interrupt(z80cpu_t *cpu) {
 }
 #endif
 
-int32_t cpu_execute(z80cpu_t *cpu, int cycles) {
+int32_t cpu_execute(z80cpu_t *cpu, int32_t cycles) {
   bool indefinite = false;
   if(!cycles) indefinite = true;
   struct ExecutionContext context = {0};
