@@ -57,6 +57,6 @@ int cpu_clear_interrupt(z80cpu_t *cpu);
 int cpu_try_interrupt(z80cpu_t *cpu, uint8_t bus);
 int cpu_try_clear_interrupt(z80cpu_t *cpu);
 #endif
-int cpu_execute(z80cpu_t *cpu, int cycles);
+int32_t cpu_execute(z80cpu_t *cpu, int cycles);
 
 #endif

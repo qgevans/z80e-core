@@ -1,6 +1,7 @@
 #include <errno.h>
 #include <string.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include "z80e/config.h"
 #include "z80e/registers.h"
@@ -945,7 +946,7 @@ int cpu_try_clear_interrupt(z80cpu_t *cpu) {
 }
 #endif
 
-int cpu_execute(z80cpu_t *cpu, int cycles) {
+int32_t cpu_execute(z80cpu_t *cpu, int cycles) {
   bool indefinite = false;
   if(!cycles) indefinite = true;
   struct ExecutionContext context = {0};
@@ -1625,5 +1626,6 @@ int cpu_execute(z80cpu_t *cpu, int cycles) {
       }
     }
   }
+  if(cycles < 0) cycles = 0;
   return cycles;
 }
