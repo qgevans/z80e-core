@@ -969,10 +969,10 @@ int32_t cpu_execute(z80cpu_t *cpu, int32_t cycles) {
 #ifdef WITH_THREADS
 	  err = pthread_mutex_unlock(&cpu->bus_lock);
 	  if(err) {
-	    return -1;
+	    return -err;
 	  }
 	} else if(err != EBUSY) {
-	  return -1;
+	  return -err;
 	}
 #endif
       }
